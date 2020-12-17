@@ -32,12 +32,32 @@ Route::get('calendario', function () {
 })->name('calendario');
 
 
+
+//********************************* Activos Fijos *********************************************** */
+// Route::get('activosFijos', function () {
+//     return view('activosFijos.listadoActivosFijos');
+// })->name('activosFijos');
+
+
+Route::get('activosFijos/listadoActivosFijos','ActivosFijos_Controller@listado')->name('activosFijos');
+Route::post('sincronizar','ActivosFijos_Controller@sincronizar')->name('sincronizar');
+Route::post('detalleActivoFijo','ActivosFijos_Controller@detalleActivoFijo')->name('detalleActivoFijo');
+
+
+
+
 //******************************* Equipo QR **************************************************
-// Route::get('categoriaEquipos','CategoriaEquipo_Controller@listado')->name('categoriaEquipo');
-// principalQR
+
+Route::get('capturaQR', function () {
+    return view('equipoQR.capturarQR');
+})->name('capturaQR');
+
 Route::get('equipoQR', function () {
     return view('equipoQR.principalQR');
 })->name('equipoQR');
+
+Route::post('guardarQR','QR_Controller@agregarQR')->name('guardarQR');
+Route::post('escanear','QR_Controller@verificarQR')->name('escanear');
 
 //******************************* CategoriaEquipo **************************************************
 Route::get('categoriaEquipos','CategoriaEquipo_Controller@listado')->name('categoriaEquipo');

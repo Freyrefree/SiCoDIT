@@ -186,6 +186,13 @@
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li class="nav-small-cap">DATOS GENERALES</li>
+                        
+                        <li>
+                            <a class="has-arrow " href="#" aria-expanded="false"><i class="mdi mdi-laptop"></i><span class="hide-menu">Activos Fijos</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{ route('activosFijos') }}">Activos Fijos</a></li>
+                            </ul>
+                        </li>
                         <li>
                             <a class="has-arrow " href="#" aria-expanded="false"><i class="mdi mdi-file-pdf"></i><span class="hide-menu">Responsivas</span></a>
                             <ul aria-expanded="false" class="collapse">
@@ -222,6 +229,7 @@
                             <a class="has-arrow " href="#" aria-expanded="false"><i class="mdi mdi-clipboard-outline"></i><span class="hide-menu">Administrar</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="{{ route('equipoQR') }}">Equipo QR</a></li>
+                                <li><a href="{{ route('capturaQR') }}">Captura QR</a></li>
                                 <li><a href="{{ route('categoriaEquipo') }}">Categoría de Equipos</a></li>
                             </ul>
                         </li>

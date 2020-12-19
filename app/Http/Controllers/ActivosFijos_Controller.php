@@ -8,6 +8,7 @@ use SimpleSoftwareIO\QrCode\BaconQrCodeGenerator;
 use SiCoDIT\Rutas\Rutas;
 use Utilerias\Documentos\UtileriasDocumentos;
 
+
 class ActivosFijos_Controller extends Controller
 {
     /**
@@ -71,43 +72,56 @@ class ActivosFijos_Controller extends Controller
             
 
             if($objRutas->validarConexion()){
+
+                $respuestaUpdate="";
+                
                
                 $consultaActivosFijosSiCoDit = "SELECT * FROM s_equipo WHERE qr IS NULL";
 
                 $datosActivosFijosSiCoDIT = DB::select($consultaActivosFijosSiCoDit); 
                 
-                foreach ($datosActivosFijosSiCoDIT as $key => $value) {
-                    $qrcode = new BaconQrCodeGenerator;
+                if($datosActivosFijosSiCoDIT != null){
 
-                    $id = $value->id;
-                    $activoFijo = $value->activoFijo;
+                    foreach ($datosActivosFijosSiCoDIT as $key => $value) {
+                        $qrcode = new BaconQrCodeGenerator;
 
-                    $qr = bcrypt($activoFijo);
+                        $id = $value->id;
+                        $activoFijo = $value->activoFijo;
 
-                    $rutaActivoFijo = $objRutas->rutaSiCoDIT."/".$activoFijo;
-                    $rutaQR = $objRutas->rutaSiCoDIT."/".$activoFijo."/QR";
-                    
+                        $qr = bcrypt($activoFijo);
 
-                    $objUtil->crearCarpeta($rutaActivoFijo);
-                    $objUtil->crearCarpeta($rutaQR);
+                        $rutaActivoFijo = $objRutas->rutaSiCoDIT.$activoFijo;
+                        $rutaQR = $objRutas->rutaSiCoDIT.$activoFijo."/QR";
+                        
 
-                    $archivoQR = $rutaQR."/".base64_encode($activoFijo).".png";
+                        $objUtil->crearCarpeta($rutaActivoFijo);
+                        $objUtil->crearCarpeta($rutaQR);
 
-                    $qrRespuesta = $qrcode->format('png')->color(38, 38, 38, 0.85)->backgroundColor(255, 255, 255, 0.82)->size(400)->generate($qr, $archivoQR);
-                    
+                        $archivoQR = $rutaQR."/".base64_encode($activoFijo).".png";
 
-                    $consultaUpdate = "UPDATE s_equipo SET 
-                    qr = '$qr',
-                    rutaqr = '$archivoQR' 
-                    WHERE id = $id";
+                        $qrRespuesta = $qrcode->format('png')->color(38, 38, 38, 0.85)->backgroundColor(255, 255, 255, 0.82)->size(400)->generate($qr, $archivoQR);
 
-                    $respuestaUpdate = DB::update($consultaUpdate);                   
+                        
 
+                        $consultaUpdate = "UPDATE s_equipo SET 
+                        qr = '$qr',
+                        rutaqr = '$archivoQR' 
+                        WHERE id = $id";
+
+                        $respuestaUpdate = DB::update($consultaUpdate);                   
+
+                    }
+
+                    if($respuestaUpdate){
+                        echo 1;
+                    }
+
+                }else{
+
+                    echo 20;
                 }
 
-                if($respuestaUpdate){
-                    echo 1;
-                }
+
 
             }else{
 
@@ -243,13 +257,13 @@ class ActivosFijos_Controller extends Controller
 
             $tablaHTML.='
             <tr>
-                <th>'.$NoArea.'</th>
-                <th>'.$areaDeValoracion.'</th> 
-                <th>'.$amo.'</th> 
-                <th>'.$duracion.'</th> 
-                <th>'.$per.'</th> 
-                <th>'.$inicioAmortizacion.'</th>
-                <th>'.$indiceReposicion.'</th>      
+                <td>'.$NoArea.'</td>
+                <td>'.$areaDeValoracion.'</td> 
+                <td>'.$amo.'</td> 
+                <td>'.$duracion.'</td> 
+                <td>'.$per.'</td> 
+                <td>'.$inicioAmortizacion.'</td>
+                <td>'.$indiceReposicion.'</td>      
             </tr>';
 
 
@@ -264,85 +278,32 @@ class ActivosFijos_Controller extends Controller
 
 
     }
+
+    public function opcionesQR(Request $data){
+
+        $activoFijo = $data->activoFijo;
+
+        $rutaQR = "";       
+
+        $query = "SELECT * FROM s_equipo WHERE activoFijo = $activoFijo";
+        $paqueteActivoFijo = DB::select($query);
+        
+        $rutaQR = $paqueteActivoFijo[0]->rutaqr;
+        $rutaQR = asset($rutaQR);
+        echo $rutaQR;
+        
+        
+
+    }
+
     
-    public function agregar(Request $data){
 
 
-        $nombreCategoria = "";
-        $respuesta = 0;
-
-        if ($data != null):
-
-            $nombreCategoria = $data->nombreCategoria;
-
-            $agregar = DB::insert("INSERT INTO categoriaequipo (nombre,fechaRegistro,estatus)
-            values('$nombreCategoria',NOW(),1)");
-            
-            if($agregar):
-                $respuesta = 1;
-            endif;
-            echo $respuesta;
-
-            // return response()->json([
-            //     'respuesta' => $respuesta,
-            //     'url'=>url('/categoriaEquipos'),
-            //     ]);
 
 
-        endif;
-
-    }
-
-    public function activarDesactivar(Request $data){   
-
-        $estatus = "";
-        $id = 0;
-        $respuesta = 0;
-
-        if ($data != null):
-            $id = $data->id;
-
-            $paquete = DB::select('SELECT estatus FROM categoriaequipo WHERE id ='.$id);
-            $estatus = $paquete[0]->estatus;
-           
-            if($estatus==1):
-                $respuesta = DB::update("UPDATE categoriaequipo SET estatus = 0 WHERE id = $id");              
-            
-            else:
-                
-                $respuesta = DB::update("UPDATE categoriaequipo SET estatus = 1 WHERE id = $id");
-
-            endif;
-
-            echo $respuesta;
-
-        endif;
-
-    }
-
-    public function obtenerDatosCategoriaEquipo(Request $data){
-
-        $id=$data->id;
-
-        $datosCategoria = DB::select('SELECT * FROM categoriaequipo WHERE id = '. $id);
-
-        echo json_encode($datosCategoria);
-           
-
-    }
-
-    public function actualizar(Request $data){
-
-        $id = $data->id;
-        $nombreCategoria = $data->nombreCategoriau;
 
 
-        $respuesta = DB::update("UPDATE categoriaequipo SET nombre = '$nombreCategoria' WHERE id = $id");
 
-        echo $respuesta;
-           
-
-    }
 
 
 }

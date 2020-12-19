@@ -10,9 +10,17 @@
         
       <div class="modal-body">
 
+      <div class="row">
 
+        <div class="col-md-6" >        
+          <img src="" alt="" id="imagenQR">
+        </div>
 
+        <div class="col-md-6">
+          <embed src="" width="100%" height="400" id="documentoQR">
+        </div>
 
+      </div>
 
 
       </div>       

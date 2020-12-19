@@ -28,7 +28,17 @@ function sincronizar(){
                 .then(() => {
                     window.location = config.routes.rutaActivosFijos;
                 })
-             }else{
+             }else if(respuesta == 20){
+                
+                swal({
+                    title: 'No existen datos para actualizar',
+                    text: '',
+                    icon: 'warning',
+                    timer: 1500,
+                    buttons: false,
+                })             
+            
+            }else{
                 swal({
                     title: 'Ocurrio Un Problema',
                     text: 'Valide con el area correspondiente',
@@ -128,9 +138,32 @@ function detalleActivoFijo(activoFijo){
 
 function opcionesQR(activoFijo){
 
+    $("#loadingIcon").show();
+    
+    
+
     $("#activoFijoTitleQR").html(activoFijo);
+    $("#imagenQR").removeAttr("src");
+
+    var url =  config.routes.rutaOpcionesQR;
+    
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: {activoFijo : activoFijo},
+           headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+         }).done(function(respuesta) {
 
 
+            $("#imagenQR").attr("src",respuesta);                
+
+            $("#loadingIcon").hide();
+
+          });
+
+  
 }
 
 

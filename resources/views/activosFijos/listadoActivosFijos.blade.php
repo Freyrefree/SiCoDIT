@@ -90,7 +90,9 @@
         routes: {
         rutaSincronizar: "{{route('sincronizar')}}",
         rutaActivosFijos: "{{route('activosFijos')}}",
-        rutaDetalleActivoFijo: "{{route('detalleActivoFijo')}}"
+        rutaDetalleActivoFijo: "{{route('detalleActivoFijo')}}",
+        rutaOpcionesQR: "{{route('opcionesQR')}}",
+        rutaQR:"",
         }
     };
 </script>

@@ -42,7 +42,7 @@ Route::get('calendario', function () {
 Route::get('activosFijos/listadoActivosFijos','ActivosFijos_Controller@listado')->name('activosFijos');
 Route::post('sincronizar','ActivosFijos_Controller@sincronizar')->name('sincronizar');
 Route::post('detalleActivoFijo','ActivosFijos_Controller@detalleActivoFijo')->name('detalleActivoFijo');
-
+Route::post('opcionesQR','ActivosFijos_Controller@opcionesQR')->name('opcionesQR');
 
 
 

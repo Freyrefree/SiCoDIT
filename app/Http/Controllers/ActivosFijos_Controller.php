@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use SimpleSoftwareIO\QrCode\BaconQrCodeGenerator;
 use SiCoDIT\Rutas\Rutas;
 use Utilerias\Documentos\UtileriasDocumentos;
+use Mpdf\Mpdf;
 
 
 class ActivosFijos_Controller extends Controller
@@ -67,7 +68,9 @@ class ActivosFijos_Controller extends Controller
 
             $rutaActivoFijo = "";
             $rutaQR = "";
+            $rutaPDF = "";
             $archivoQR ="";
+            $archivoPDF ="";
 
             
 
@@ -92,16 +95,22 @@ class ActivosFijos_Controller extends Controller
 
                         $rutaActivoFijo = $objRutas->rutaSiCoDIT.$activoFijo;
                         $rutaQR = $objRutas->rutaSiCoDIT.$activoFijo."/QR";
+                        $rutaPDF = $objRutas->rutaSiCoDIT.$activoFijo."/PDF";
                         
 
                         $objUtil->crearCarpeta($rutaActivoFijo);
                         $objUtil->crearCarpeta($rutaQR);
+                        $objUtil->crearCarpeta($rutaPDF);
 
                         $archivoQR = $rutaQR."/".base64_encode($activoFijo).".png";
+                        $archivoPDF = $rutaPDF."/".base64_encode($activoFijo).".pdf";
 
                         $qrRespuesta = $qrcode->format('png')->color(38, 38, 38, 0.85)->backgroundColor(255, 255, 255, 0.82)->size(400)->generate($qr, $archivoQR);
-
                         
+                        $mpdf = new \Mpdf\Mpdf();
+                        $mpdf->WriteHTML('<img src="'.$archivoQR.'" alt="">');
+                        $mpdf->Output($archivoPDF, \Mpdf\Output\Destination::FILE);
+
 
                         $consultaUpdate = "UPDATE s_equipo SET 
                         qr = '$qr',
